@@ -1,0 +1,89 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/nfcsecure"
+    tools:context=".FullscreenActivity" >
+
+    <!--
+
+         The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc.
+    -->
+
+
+    <!--
+         This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows.
+    -->
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="401dp"
+            android:fitsSystemWindows="true" >
+
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="50dp"
+            android:background="@color/black_overlay"
+            android:orientation="vertical"
+            tools:ignore="UselessParent" >
+
+<ImageView
+    android:id="@+id/imageView1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:src="@drawable/ic_launcher" />
+            
+        </LinearLayout>    
+
+</FrameLayout>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true" >
+
+        <EditText
+            android:id="@+id/edit_message"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="0dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:hint="@string/edit_message"
+            android:textColorHint="#FFFFFF" />
+
+        <Button
+            android:id="@+id/buttonLoadPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="0"
+            android:layout_marginLeft="140dp"
+            android:text="@string/LoadPicture" />
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:layout_gravity="bottom"
+            android:onClick="sendMessage"
+            android:layout_marginLeft="240dp"
+            android:text="@string/button_send" />
+
+<!-- style="borderlessButtonStyle"
+            android:background="?android:attr/selectableItemBackground"
+ -->
+    </FrameLayout>
+
+</FrameLayout>
