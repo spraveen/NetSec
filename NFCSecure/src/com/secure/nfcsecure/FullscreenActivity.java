@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 import com.secure.nfcsecure.util.SystemUiHider;
 //ara
- 
+
 //ara
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -70,12 +70,12 @@ public class FullscreenActivity extends Activity {
 	 */
 
 	private static int RESULT_LOAD_IMAGE = 1;
-	
+
 	NfcAdapter mNfcAdapter;
 
 	public final static String EXTRA_MESSAGE = "com.secure.nfcsecure.MESSAGE";
-	
-	private String sendPicturePath="";
+
+	private String sendPicturePath = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,61 +93,64 @@ public class FullscreenActivity extends Activity {
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
-	
 
-		//TextView textView = (TextView) findViewById(R.id.fullscreen_content);
+		// TextView textView = (TextView) findViewById(R.id.fullscreen_content);
 		if (mNfcAdapter != null)
-			Toast.makeText(this,"NFC is present" ,Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "NFC is present", Toast.LENGTH_SHORT).show();
 		else
-			Toast.makeText(this,"NFC is not present" ,Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "NFC is not present", Toast.LENGTH_SHORT)
+					.show();
 
 		Button buttonLoadImage = (Button) findViewById(R.id.buttonLoadPicture);
-        buttonLoadImage.setOnClickListener(new View.OnClickListener() {
-             
-            @Override
-            public void onClick(View arg0) {
-                 
-                Intent i = new Intent(
-                        Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                 
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
-            }
-        });
+		buttonLoadImage.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+
+				Intent i = new Intent(
+						Intent.ACTION_PICK,
+						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+				startActivityForResult(i, RESULT_LOAD_IMAGE);
+			}
+		});
 
 	}
-	//ara
+
+	// ara
 	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-         
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
- 
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();
- 
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-             
-            ImageView imageView = (ImageView) findViewById(R.id.imageView1);
-            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-//            imageView.setImageResource(R.id.imageView1);
-            sendPicturePath = new String(picturePath);
-            
-            //imageView.setImageURI(Uri.fromFile(picturePath));
-            //@SuppressWarnings("deprecation")
-			//Drawable drawable =new BitmapDrawable(BitmapFactory.decodeFile(picturePath));
-            //imageView.setImageDrawable(drawable);
-            
-        }
-     
-     
-    }	
-	//ara
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
+				&& null != data) {
+			Uri selectedImage = data.getData();
+			String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+			Cursor cursor = getContentResolver().query(selectedImage,
+					filePathColumn, null, null, null);
+			cursor.moveToFirst();
+
+			int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			String picturePath = cursor.getString(columnIndex);
+			cursor.close();
+
+			ImageView imageView = (ImageView) findViewById(R.id.imageView1);
+			imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+			// imageView.setImageResource(R.id.imageView1);
+			sendPicturePath = new String(picturePath);
+
+			// imageView.setImageURI(Uri.fromFile(picturePath));
+			// @SuppressWarnings("deprecation")
+			// Drawable drawable =new
+			// BitmapDrawable(BitmapFactory.decodeFile(picturePath));
+			// imageView.setImageDrawable(drawable);
+			Log.v("com.secure.nfcsecure", "testing");
+		}
+
+	}
+
+	// ara
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -189,7 +192,9 @@ public class FullscreenActivity extends Activity {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
-	public static void writeFullFile(String filename,byte[] bytes) throws Exception {
+
+	public static void writeFullFile(String filename, byte[] bytes)
+			throws Exception {
 		FileOutputStream fos = new FileOutputStream(new File(filename));
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		bos.write(bytes);
@@ -198,62 +203,112 @@ public class FullscreenActivity extends Activity {
 
 	@SuppressLint("NewApi")
 	public void sendMessage(View view) throws Exception {
-		Intent intent = getIntent();
 		EditText editText = (EditText) findViewById(R.id.edit_message);
+		String code = editText.getText().toString();
+
+		MyCryptography mycrypto;
+		mycrypto = new MyCryptography(code.toCharArray());
+		// System.out.print(result);
+
+		Intent intent = getIntent();
+
+		Toast.makeText(this, "encryption code: " + code, Toast.LENGTH_SHORT)
+				.show();
+
 		String message = editText.getText().toString();
 		intent.putExtra(EXTRA_MESSAGE, message);
-//		TextView textView = (TextView) findViewById(R.id.fullscreen_content);
-//		textView.setText(message);
+		// TextView textView = (TextView) findViewById(R.id.fullscreen_content);
+		// textView.setText(message);
 		intent.setComponent(new ComponentName("com.secure.nfcsecure",
 				"com.secure.nfcsecure.MainActivity"));
-		//ara
+		// ara
 
 		Bitmap bmp = BitmapFactory.decodeFile(sendPicturePath);
-//		Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+		// Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+		// R.drawable.ic_launcher);
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		bmp.compress(Bitmap.CompressFormat.JPEG,100,stream);
-		byte[] byteArray = stream.toByteArray();
-//		NdefRecord picRecord = createMimeRecord("image/jpeg", byteArray);
-//	    NdefMessage msg = new NdefMessage(NdefRecord.createMime("image/jpeg", byteArray));
-	    
-	    NdefRecord textRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,"application/vnd.nfcsecure".getBytes(), new byte[] {}, byteArray);
-	    NdefMessage msg=new NdefMessage(new NdefRecord[] { textRecord });
-//	    NdefRecord textRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,"application/vnd.facebook.places".getBytes(), new byte[] {}, byteArray);
-//	    NdefMessage msg=new NdefMessage(new NdefRecord[] { textRecord });
-	    //textView.setText(msg.toString());
-	    //Toast.makeText(this,"Created ndefmessage" ,Toast.LENGTH_SHORT).show();
-	    /*
+		bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		// byte[] byteArray = stream.toByteArray();
+
+//		String path = Environment.getExternalStorageDirectory().toString();
+//		File filename = new File(path, "temp.txt");
+//		FileOutputStream out = new FileOutputStream(filename);
+
+		byte[] encryptByte = stream.toByteArray();
+//		byte[] encryptByte = "Test\n".getBytes();
+		byte[] decryptByte = null;
+
+		byte[] byteArray = mycrypto.encrypt(encryptByte);
+		try {
+			decryptByte = mycrypto.decrypt(byteArray);
+		} catch (Exception e) {
+//			out.write(e.getMessage().getBytes());
+//			out.close();
+			Toast.makeText(this, "Exception decryption", Toast.LENGTH_SHORT)
+					.show();
+			return;
+		}
+//		Toast.makeText(this, "Strings failed to match", Toast.LENGTH_SHORT)
+//				.show();
+//		Toast.makeText(this, "Strings enc:" + encryptByte, Toast.LENGTH_LONG)
+//				.show();
+//		Toast.makeText(this, "Strings enc:" + decryptByte, Toast.LENGTH_LONG)
+//				.show();
+//
+//		out.write(encryptByte);
+//		
+//		out.write("1.\n".getBytes());
+//
+//		out.write("2.\n".getBytes());
+//		
+//		out.write(decryptByte);
+//		out.close();
+
+		// NdefRecord picRecord = createMimeRecord("image/jpeg", byteArray);
+		// NdefMessage msg = new NdefMessage(NdefRecord.createMime("image/jpeg",
+		// byteArray));
+
+		NdefRecord textRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
+				"application/vnd.nfcsecure".getBytes(), new byte[] {},
+				byteArray);
+		NdefMessage msg = new NdefMessage(new NdefRecord[] { textRecord });
+		// NdefRecord textRecord = new
+		// NdefRecord(NdefRecord.TNF_MIME_MEDIA,"application/vnd.facebook.places".getBytes(),
+		// new byte[] {}, byteArray);
+		// NdefMessage msg=new NdefMessage(new NdefRecord[] { textRecord });
+		// textView.setText(msg.toString());
+		// Toast.makeText(this,"Created ndefmessage"
+		// ,Toast.LENGTH_SHORT).show();
+		/*
 		 * 		*/
-		
-		///Log.w("System.out",msg.toString() + " nfc "+ msg.toString().length());
-		//ara
-		intent.putExtra("NDEF",msg.toString());
+
+		// /Log.w("System.out",msg.toString() + " nfc "+
+		// msg.toString().length());
+		// ara
+		intent.putExtra("NDEF", msg.toString());
 		// Register callback to set NDEF message
 		mNfcAdapter.setNdefPushMessage(msg, this, this);
 		// Register callback to listen for message-sent success
 		mNfcAdapter.setOnNdefPushCompleteCallback(null, this, this);
-		Toast.makeText(this,"Ndef Message Ready For Dispatch" ,Toast.LENGTH_SHORT).show();		
-	    //startActivity(intent);
+		Toast.makeText(this, "Ndef Message Ready For Dispatch",
+				Toast.LENGTH_SHORT).show();
+		// startActivity(intent);
 	}
-	
-	//http://www.packtpub.com/article/new-connectivity-apis-android-beam
+
+	// http://www.packtpub.com/article/new-connectivity-apis-android-beam
 	/*
-	public NdefMessage createNdefMessage(NfcEvent arg0) {
-		Bitmap icon =
-		BitmapFactory.decodeResource(this.getResources(),
-				R.id.imageView1);
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		icon.compress(Bitmap.CompressFormat.PNG, 100, stream);
-		byte[] byteArray = stream.toByteArray();
-		NdefMessage msg = new NdefMessage(new NdefRecord[] {
-		//createMimeRecord("application/com.chapter9", byteArray), NdefRecord.createApplicationRecord("com.chapter9");
-		});
-		return msg;
-	}
-	*/
+	 * public NdefMessage createNdefMessage(NfcEvent arg0) { Bitmap icon =
+	 * BitmapFactory.decodeResource(this.getResources(), R.id.imageView1);
+	 * ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	 * icon.compress(Bitmap.CompressFormat.PNG, 100, stream); byte[] byteArray =
+	 * stream.toByteArray(); NdefMessage msg = new NdefMessage(new NdefRecord[]
+	 * { //createMimeRecord("application/com.chapter9", byteArray),
+	 * NdefRecord.createApplicationRecord("com.chapter9"); }); return msg; }
+	 */
 	public NdefRecord createMimeRecord(String mimeType, byte[] payload) {
 		byte[] mimeBytes = mimeType.getBytes(Charset.forName("USASCII"));
-		NdefRecord mimeRecord = new	NdefRecord(NdefRecord.TNF_MIME_MEDIA,mimeBytes, new byte[0], payload);
+		NdefRecord mimeRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
+				mimeBytes, new byte[0], payload);
 		return mimeRecord;
 	}
 
@@ -263,8 +318,7 @@ public class FullscreenActivity extends Activity {
 	}
 
 	private void handleViewIntent(Intent intent) {
-		Log.w("nfcsecure", "Fuck found an intent");
-		Log.w("nfcsecure", intent.toString());
+		Log.v("com.secure.nfcsecure", intent.toString());
 	}
 
 	@Override
@@ -301,26 +355,35 @@ public class FullscreenActivity extends Activity {
 	}
 
 	void processIntent(Intent intent) {
+		MyCryptography mycrypto;
+		EditText editText = (EditText) findViewById(R.id.edit_message);
+		String code = editText.getText().toString();
+
 		Parcelable[] msgs = intent
 				.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 		NdefMessage[] nmsgs = new NdefMessage[msgs.length];
-		Toast.makeText(this, "Messages received" + msgs.length ,Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "Messages received" + msgs.length,
+				Toast.LENGTH_LONG).show();
 		for (int i = 0; i < msgs.length; i++) {
 			nmsgs[i] = (NdefMessage) msgs[i];
-			Log.v("processIntent", msgs[i].toString());
+			Log.v("com.secure.nfcsecure", msgs[i].toString());
+		}
+		try {
+			mycrypto = new MyCryptography(code.toCharArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
 		}
 
 		NdefRecord[] rec = nmsgs[0].getRecords();
-//		byte[] infoRecord = rec[0].getPayload();
+		// byte[] infoRecord = rec[0].getPayload();
 		byte[] pictureRecord = rec[0].getPayload();
-		Toast.makeText(this,
-				"Records received! Size:" + rec.length,
+		Toast.makeText(this, "Records received! Size:" + rec.length,
 				Toast.LENGTH_SHORT).show();
 		Intent mintent = getIntent();
 		mintent.setComponent(new ComponentName("com.secure.nfcsecure",
 				"com.secure.nfcsecure.MainActivity"));
-		mintent.putExtra("NDEF",pictureRecord.toString());
-		
+		mintent.putExtra("NDEF", pictureRecord.toString());
 
 		/*
 		 * Toast.makeText(this, "Info received! Size:" + infoRecord.toString(),
@@ -330,8 +393,9 @@ public class FullscreenActivity extends Activity {
 		 * pictureRecord.toString(), Toast.LENGTH_LONG).show();
 		 */
 
-//		byte[] payload = nmsgs[0].getRecords()[0].getPayload();
+		// byte[] payload = nmsgs[0].getRecords()[0].getPayload();
 		byte[] payload = pictureRecord;
+
 		if (payload != null) {
 			ImageView imgViewer = (ImageView) findViewById(R.id.imageView1);
 			if (nmsgs[0].getRecords()[0].getTnf() == 2) {
@@ -339,8 +403,23 @@ public class FullscreenActivity extends Activity {
 						"New picture received! Size:" + payload.length,
 						Toast.LENGTH_SHORT).show();
 
-				Bitmap bm = BitmapFactory.decodeByteArray(payload, 0,
-						payload.length);
+				// Bitmap bm = BitmapFactory.decodeByteArray(payload, 0,
+				// payload.length);
+				Bitmap bm;
+				try {
+					// String payloadString = mycrypto.decrypt(pictureRecord);
+					byte[] data = mycrypto.decrypt(pictureRecord);
+					payload = new byte[data.length];
+					payload = data;
+					// byte[] data = payloadString.getBytes();
+					bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+				} catch (Exception e) {
+					e.printStackTrace();
+					Toast.makeText(this, "Decryption Error!!",
+							Toast.LENGTH_LONG).show();
+
+					return;
+				}
 				DisplayMetrics dm = new DisplayMetrics();
 				getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -360,12 +439,12 @@ public class FullscreenActivity extends Activity {
 							.toString();
 					File filename = new File(path, "temp.jpeg");
 					FileOutputStream out = new FileOutputStream(filename);
-//					bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
+					// bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
 					out.write(payload);
-					
-					Toast.makeText(this, "Picture Saved!", Toast.LENGTH_SHORT)
-							.show();
-					
+
+					Toast.makeText(this, "Picture Saved!!",
+							Toast.LENGTH_SHORT).show();
+
 					out.flush();
 					out.close();
 				} catch (Exception e) {
@@ -396,7 +475,7 @@ public class FullscreenActivity extends Activity {
 				 */
 			}
 		}
-	    //startActivity(mintent);
+		// startActivity(mintent);
 	}
 	// process the msgs array
 }
