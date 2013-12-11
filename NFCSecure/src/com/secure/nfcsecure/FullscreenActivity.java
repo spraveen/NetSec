@@ -202,8 +202,8 @@ public class FullscreenActivity extends Activity {
 		EditText editText = (EditText) findViewById(R.id.edit_message);
 		String message = editText.getText().toString();
 		intent.putExtra(EXTRA_MESSAGE, message);
-		TextView textView = (TextView) findViewById(R.id.fullscreen_content);
-		textView.setText(message);
+//		TextView textView = (TextView) findViewById(R.id.fullscreen_content);
+//		textView.setText(message);
 		intent.setComponent(new ComponentName("com.secure.nfcsecure",
 				"com.secure.nfcsecure.MainActivity"));
 		//ara
@@ -232,7 +232,7 @@ public class FullscreenActivity extends Activity {
 		mNfcAdapter.setNdefPushMessage(msg, this, this);
 		// Register callback to listen for message-sent success
 		mNfcAdapter.setOnNdefPushCompleteCallback(null, this, this);
-		Toast.makeText(this,"sent ndefmessage" ,Toast.LENGTH_SHORT).show();		
+		Toast.makeText(this,"Ndef Message Ready For Dispatch" ,Toast.LENGTH_SHORT).show();		
 	    //startActivity(intent);
 	}
 	
